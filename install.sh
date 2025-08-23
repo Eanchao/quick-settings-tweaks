@@ -141,11 +141,12 @@ function enable() {
 	gnome-extensions enable quick-settings-tweaks@eanchao
 }
 
+# 安装
 function install() {
 	gnome-extensions install\
-		target/quick-settings-tweaks@eanchao.shell-extension.zip\
+		target/quick-settings-tweaks@qwreey.shell-extension.zip\
 		--force
-	[ "$?" != "0" ] && echo "Failed to install extension" && return 1
+	[ "$?" != "0" ] && echo "安装扩展失败" && return 1
 	echo "已安装扩展。如果扩展不存在请注销并重新登录并检查扩展列表。"
 
 	return 0
@@ -211,7 +212,7 @@ function create-release() {
 	get-full-version
 	update-metadata-version
 	VERSION=$VERSION BUILD_NUMBER=$BUILD_NUMBER build
-	cp target/quick-settings-tweaks@eanchao.shell-extension.zip target/$VERSION-$TARGET.zip
+	cp target/quick-settings-tweaks@qwreey.shell-extension.zip target/$VERSION-$TARGET.zip
 }
 
 function dev() {
@@ -251,7 +252,7 @@ EOF
 	if [ -e "./host/gnome-docker" ]; then
 		CURTAG="$(git -C host/gnome-docker describe --tags --always --abbrev=0 HEAD)"
 	else
-		git clone https://github.com/eanchao/gnome-docker host/gnome-docker --recursive --tags
+		git clone https://github.com/qwreey/gnome-docker host/gnome-docker --recursive --tags
 	fi
 
 	TARTAG="$(cat scripts/version/gnome-docker-version)"
@@ -277,8 +278,8 @@ function dev-guest() {
 }
 
 function usage() {
-	echo 'Usage: ./install.sh COMMAND'
-	echo 'COMMAND:'
+	echo '用法: ./install.sh 命令'
+	echo '命令:'
 	echo "  install             在用户的主目录中安装扩展"
 	echo '                      -> ~/.local'
 	echo '  build               创建 zip 扩展文件'
