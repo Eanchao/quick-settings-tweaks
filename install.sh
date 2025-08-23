@@ -1,30 +1,34 @@
 #!/usr/bin/env bash
+# 2025-08-22
+# QST-CN
+# TR: Eanchao -> CN
 cd "$(dirname "$(readlink -f "$0")")"
 
 function update-po() {
 	build
 
 	echo '' > messages.po
-	[ "$?" != "0" ] && echo "update-po: Unable to create ./messages.po file" && return 1
+	[ "$?" != "0" ] && echo "update-po: 无法创建 ./messages.po 文件" && return 1
 
 	which xgettext 2>/dev/null >/dev/null
-	[ "$?" != "0" ] && echo "update-po: xgettext is not installed on this system. please install and try again" && return 1
+	[ "$?" != "0" ] && echo "update-po: 此系统上未安装 xgettext。请安装并重试" && return 1
 
 	find ./target/out -type f \( -name "*.ui" -or -name "*.js" \) | xgettext --from-code utf-8 -j messages.po -f -
-	[ "$?" != "0" ] && echo "update-po: Unable to update messages.po file by xgettext" && return 1
+	[ "$?" != "0" ] && echo "update-po: 无法通过 xgettext 更新 messages.po 文件" && return 1
 
 	sed -i 's|"Content\-Type: text/plain; charset=CHARSET\\n"|"Content-Type: text/plain; charset=UTF-8\\n"|g' messages.po
-	[ "$?" != "0" ] && echo "update-po: Unable to set charset in messages.po file" && return 1
+	[ "$?" != "0" ] && echo "update-po: 无法在 messages.po 文件中设置字符集" && return 1
 
 	find ./po -type f -name "*.po" | xargs -i msgmerge {} messages.po -N --no-wrap -U
-	[ "$?" != "0" ] && echo "update-po: Failed to update *.po files (msgmerge error)" && return 1
+	[ "$?" != "0" ] && echo "update-po: 无法更新 *.po 文件 (msgmerge 错误)" && return 1
 
 	mv messages.po $(find ./po -type f -name "*.pot")
-	[ "$?" != "0" ] && echo "update-po: Unable to move messages.po file (pot file not found)" && return 1
+	[ "$?" != "0" ] && echo "update-po: 无法移动 messages.po 文件 (找不到 pot 文件)" && return 1
 
 	return 0
 }
 
+# 获取贡献者信息
 function fetch-contributors() {
 	LABELS=$(cat scripts/contributor-labels.json)
 	echo "["
@@ -56,14 +60,14 @@ function build() {
 	rm -rf target/out
 	mkdir -p target/out
 
-	# Typescript compiling
+	# 编译 TS 文件
 	(
 		npx tsc --noCheck
 		cp -r target/tsc/* target/out
 	) &
 	TSC_PID=$!
 
-	# Stylesheet compiling
+	# 编译样式文件
 	(
 		npx sass\
 			--no-source-map\
@@ -72,7 +76,7 @@ function build() {
 	) &
 	SASS_PID=$!
 
-	# Fetch contributors & Copy assets
+	# 获取贡献者并复制文件
 	(
 		if [ ! -e target/contributors ]; then
 			mkdir -p target/contributors
@@ -85,12 +89,12 @@ function build() {
 	) &
 	COPYING_PID=$!
 
-	# Wait for tasks
+	# 等待任务执行
 	wait $TSC_PID
 	wait $SASS_PID
 	wait $COPYING_PID
 
-	# Update config metadata
+	# 更新配置元数据信息
 	case "$TARGET" in
 		dev )
 			sed 's/isDevelopmentBuild: false/isDevelopmentBuild: true/' -i target/out/config.js
@@ -114,10 +118,10 @@ function build() {
 	sed "s/version: \"unknown\"/version: \"$VERSION\"/" -i target/out/config.js
 	[ ! -z "$BUILD_NUMBER" ] && sed "s/buildNumber: 0/buildNumber: $BUILD_NUMBER/" -i target/out/config.js
 
-	# Change indents for reducing size of target
+	# 更改缩进以减小编译目标大小
 	node scripts/reindent.js -- target/out/**/*.js
 
-	# Pack extension
+	# 打包扩展
 	gnome-extensions pack target/out\
 		--podir=../../po\
 		--extra-source=features\
@@ -128,21 +132,21 @@ function build() {
 		--extra-source=config.js\
 		--out-dir=target\
 		--force
-	[ "$?" != "0" ] && echo "Failed to pack extension" && return 1
+	[ "$?" != "0" ] && echo "打包扩展失败" && return 1
 
 	return 0
 }
 
 function enable() {
-	gnome-extensions enable quick-settings-tweaks@qwreey
+	gnome-extensions enable quick-settings-tweaks@eanchao
 }
 
 function install() {
 	gnome-extensions install\
-		target/quick-settings-tweaks@qwreey.shell-extension.zip\
+		target/quick-settings-tweaks@eanchao.shell-extension.zip\
 		--force
 	[ "$?" != "0" ] && echo "Failed to install extension" && return 1
-	echo "Extension was installed. logout and login shell, and check extension list."
+	echo "已安装扩展。如果扩展不存在请注销并重新登录并检查扩展列表。"
 
 	return 0
 }
@@ -157,7 +161,7 @@ function clear-old-po() {
 
 function compile-preferences() {
 	glib-compile-schemas --targetdir=target/out/schemas schemas
-	[ "$?" != "0" ] && echo "compile-preferences: glib-compile-schemas command failed" && return 1
+	[ "$?" != "0" ] && echo "compile-preferences: glib-compile-schemas 命令执行失败" && return 1
 
 	return 0
 }
@@ -207,7 +211,7 @@ function create-release() {
 	get-full-version
 	update-metadata-version
 	VERSION=$VERSION BUILD_NUMBER=$BUILD_NUMBER build
-	cp target/quick-settings-tweaks@qwreey.shell-extension.zip target/$VERSION-$TARGET.zip
+	cp target/quick-settings-tweaks@eanchao.shell-extension.zip target/$VERSION-$TARGET.zip
 }
 
 function dev() {
@@ -247,7 +251,7 @@ EOF
 	if [ -e "./host/gnome-docker" ]; then
 		CURTAG="$(git -C host/gnome-docker describe --tags --always --abbrev=0 HEAD)"
 	else
-		git clone https://github.com/qwreey/gnome-docker host/gnome-docker --recursive --tags
+		git clone https://github.com/eanchao/gnome-docker host/gnome-docker --recursive --tags
 	fi
 
 	TARTAG="$(cat scripts/version/gnome-docker-version)"
@@ -275,16 +279,16 @@ function dev-guest() {
 function usage() {
 	echo 'Usage: ./install.sh COMMAND'
 	echo 'COMMAND:'
-	echo "  install             install the extension in the user's home directory"
-	echo '                      under ~/.local'
-	echo '  build               Creates a zip file of the extension'
-	echo '  update-po           Update po files to match source files'
-	echo '  dev                 Run dev docker'
-	echo '  log                 show extension logs (live)'
-	echo '  clear-old-po        clear *.po~'
-	echo '  enable              enable extension'
-	echo '  install-enable      install and enable'
-	echo '  compile-preferences compile schema file (test)'
+	echo "  install             在用户的主目录中安装扩展"
+	echo '                      -> ~/.local'
+	echo '  build               创建 zip 扩展文件'
+	echo '  update-po           更新 po 文件以匹配源文件'
+	echo '  dev                 运行 dev Docker'
+	echo '  log                 显示扩展日志（实时）'
+	echo '  clear-old-po        清理 *.po~'
+	echo '  enable              启用扩展'
+	echo '  install-enable      安装并启动'
+	echo '  compile-preferences 编译架构文件（测试）'
 }
 
 case "$1" in
