@@ -2,6 +2,20 @@
 <!-- Note: -->
 <!-- This file is visible in prefs so if -->
 <!-- it is erased it may cause an error -->
+# 2.3.1-stable
+<!-- @BuildNumber: 11 -->
+<!-- @Includes: [] -->
+<!-- @Date: "2025-08-28 00:37:00 KST" -->
+<!-- @Git: "7142389" -->
+
+{{HEADER}}
+
+## Fix
+
+- 简体中文翻译调整与补全
+  - 修复了简体中文无法生效的问题
+
+
 # 2.3-stable
 <!-- @BuildNumber: 10 -->
 <!-- @Includes: [] -->

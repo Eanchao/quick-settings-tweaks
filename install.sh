@@ -290,6 +290,7 @@ function usage() {
 	echo '  enable              启用扩展'
 	echo '  install-enable      安装并启动'
 	echo '  compile-preferences 编译架构文件（测试）'
+	echo '  create-release      创建发行版本'
 }
 
 case "$1" in
