@@ -63,7 +63,12 @@ Here is my sponsors, thank for your support!
 pnpm i
 ```
 
-2. 打包
+2. 安装 GetText
+```sh
+sudo apt install gettext -y
+```
+
+3. 打包
 ```sh
 ./install.sh install
 ```
