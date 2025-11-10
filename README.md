@@ -11,7 +11,7 @@
 </a>
 <br>
 <br>
-Quick Settings Tweaker 是 Gnome 46 的扩展程序，可让您根据自己的喜好自定义新的快速设置面板！
+Quick Settings Tweaker 是 Gnome 46+ 的扩展程序，可让您根据自己的喜好自定义新的快速设置面板！
 
 </div>
 <br>
