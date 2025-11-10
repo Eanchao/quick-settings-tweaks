@@ -58,6 +58,16 @@ Here is my sponsors, thank for your support!
 
 > 前置条件：您必须安装 `nodejs`、`bash`、`gettext` 以及 `gnome-shell` 来打包本扩展
 
+1. 请先安装依赖：
+```sh
+pnpm i
+```
+
+2. 打包
+```sh
+./install.sh install
+```
+
 您可以通过执行`TARGET=dev ./install.sh create-release`来创建开发构建。 确保先运行`npm i`以确保安装了所有构建依赖项
 
 或者，您可以从 [Github 版本发布选项卡](https://github.com/eanchao/quick-settings-tweaks/releases) 获取已构建好的版本。不鼓励从 `dev` 分支构建扩展，因为 `dev` 分支具有未经检查的前沿功能，无法保证工作。Github预 由开发人员测试，比构建 `dev` 分支稳定得多。
